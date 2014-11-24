@@ -1,0 +1,63 @@
+<html>
+<head>
+  <title>Read It Live</title>
+  <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.19/angular.min.js"></script>
+  <script src="/javascripts/angularApp.js"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.10/angular-ui-router.js"></script>
+  <style> .glyphicon-thumbs-up { cursor:pointer } </style>
+</head>
+<body ng-app="readItLive">
+  <div class="row">
+    <div class="col-md-6 col-md-offset-3">
+
+      <ui-view>
+        <script type="text/ng-template" id="/home.html">
+          <div class="page-header">
+            <h1>Read It Live</h1>
+          </div>
+
+
+        <div ng-repeat="event in events">
+          <span style="font-size:20px; margin-left:10px;">
+            <a href="{{event.link}}">
+            {{event.title}}
+            </a>
+          </span>
+        </div>
+
+        <h3>Add a new event</h3>
+
+        <div class="form-group">
+          <input type="text" class="form-control" placeholder="Title" ng-model="title"></input>
+        </div>
+        <div class="form-group">
+          <input type="text" class="form-control" placeholder="Details" ng-model="detail"></input>
+        </div>
+        <button ng-click='addEvent()' type="submit" class="btn btn-primary">Submit</button>
+        </ui-vew>
+
+        </div>
+      </div>
+      </script>
+      <script type="text/ng-template" id="/events.html">
+          <div class="page-header">
+            <h2> This is the event specific page </h2>
+            <h3>
+              <a ng-show="event.link" href="{{event.link}}">
+                {{event.title}}
+              </a>
+              <span ng-hide="event.link">
+                {{event.title}}
+              </span>
+            </h3>
+          </div>
+          <span>
+            <a href="#/events/{{$index}}">Comments</a>
+          </span>
+
+        </script>
+      </ui-view>
+    </body>
+    </html>

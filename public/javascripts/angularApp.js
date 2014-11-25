@@ -27,16 +27,24 @@ angular.module('readItLive', ['ui.router'])
 	};
 
 }])
+
+.controller('EventsCtrl', ['$scope','eventsFactory', function($scope, eventsFactory){
+  $scope.events = eventsFactory.events;
+  $scope.str = "Neil";
+  $scope.addEvent = function(){
+    if(!$scope.title || $scope.title===''){return;}
+    $scope.events.push({'title':$scope.title, 'link':'http://firstpost.com'});
+    $scope.title='';
+  };
+
+}])
 .controller('MainCtrl', ['$scope','eventsFactory', function($scope, eventsFactory){
   $scope.events = eventsFactory.events;
 
   $scope.addEvent = function(){
     if(!$scope.title || $scope.title===''){return;}
-  	$scope.events.push({'title':$scope.title, 'link':'http://firstpost.com'});
+    $scope.events.push({'title':$scope.title, 'link':'http://firstpost.com'});
     $scope.title='';
   };
 
-}])
-.controller('EventsCtrl',['$scope','eventsFactory','stateParams', function($scope, stateParams, eventsFactory){
-  $scope.events = eventsFactory.events[stateParams.id];
 }]);

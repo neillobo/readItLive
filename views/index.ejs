@@ -13,6 +13,9 @@
       <ui-view> </ui-view>
     </div>
   </div>
+
+<!--  template for Home  -->
+
       <script type="text/ng-template" id="/home.html">
           <div class="page-header">
              <h1>Read It Live</h1>
@@ -22,14 +25,16 @@
 
            <div ng-repeat="event in events">
              <span style="font-size:20px; margin-left:10px;">
-               <div ng-click='getEvent(event)'>
+
+               <a ui-sref="eventDetail({id : '{{event._id}}'})">
                {{event.title}}
-               </div>
+               </a>
              </span>
            </div>
 
       </script>
 
+<!-- Template for Creation of New Event -->
        <script type="text/ng-template" id="/newEvent.html">
           <div class="page-header">
              <h1>Read It Live</h1>
@@ -44,6 +49,24 @@
              <input type="text" class="form-control" placeholder="Details" ng-model="detail"></input>
            </div>
            <button ng-click='addEvent()' type="submit" class="btn btn-primary">Submit</button>
+
+      </script>
+
+<!-- Template for Details and Posts for a Specific Event -->
+      <script type="text/ng-template" id="/eventDetail.html">
+
+        <div class="page-header">
+          <h1>Read It Live</h1>
+        </div>
+        <a ui-sref="home">Return to All Events</a>
+        <h3>This is an event specific page</h3>
+          <div ng-repeat="post in posts">
+             <span style="font-size:20px; margin-left:10px;">
+               <div>
+               {{post.text}}
+               </div>
+             </span>
+           </div>
 
       </script>
 

@@ -21,6 +21,17 @@ function($stateProvider, $urlRouterProvider) {
       url: '/newEvent',
       templateUrl: '/newEvent.html',
       controller: 'CreateEventCtrl'
+    })
+    .state('eventDetail', {
+      url: '/event/:id',
+      templateUrl: '/eventDetail.html',
+      controller: 'EventDetailCtrl'
+      // resolve : {
+      //   postsFactory : 'postsFactory',
+      //   posts : function(postsFactory){
+      //     return postsFactory.getPosts().$promise;
+      //   }
+      // }
     });
 
   $urlRouterProvider.otherwise('home');
@@ -31,22 +42,29 @@ function($stateProvider, $urlRouterProvider) {
     events : [],
     getAll : function(){
       return $http.get('/events').then(function(data) {
-        console.log("Success The returned object is ", data.data);
         angular.copy(data.data, obj.events);
       },function(err) { console.log("Error"); })}
     };
 
     return obj;
 }])
+.factory('postsFactory',['$http','$stateParams', function($http, $stateParams){
+
+
+}])
 .controller('MainCtrl', ['$scope', '$state', 'eventsFactory',function($scope, $state, eventsFactory){
   $scope.events = eventsFactory.events;
 
-  // $scope.addEventPage = function(){
-  //   $state.go('newEvent');
-  // }
-  $scope.getEvent = function(event){
-    console.log(event);
-  }
+}])
+.controller('EventDetailCtrl',['$scope','$http', 'postsFactory', '$stateParams', function($scope, $http, postsFactory, $stateParams){
+
+
+
+    $http.get('/events/'+$stateParams.id).then(function(data){
+        console.log("Retrieving posts for specific event", data);
+        $scope.posts = data;
+      }, function(err) {console.log("Error in finding event", err); });
+
 
 }])
 .controller('CreateEventCtrl', ['$scope', '$http', 'eventsFactory', function($scope, $http, eventsFactory){

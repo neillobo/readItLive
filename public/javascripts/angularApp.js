@@ -8,40 +8,56 @@ function($stateProvider, $urlRouterProvider) {
     .state('home', {
       url: '/home',
       templateUrl: '/home.html',
-      controller: 'MainCtrl'
+      controller: 'MainCtrl',
+      resolve : {
+        eventsFactory : 'eventsFactory',
+
+        events : function(eventsFactory){
+          return eventsFactory.getAll().$promise;
+        }
+      }
     })
-    .state('events', {
-      url: '/events',
-      templateUrl: '/events.html',
-      controller: 'EventsCtrl'
+    .state('newEvent', {
+      url: '/newEvent',
+      templateUrl: '/newEvent.html',
+      controller: 'CreateEventCtrl'
     });
 
   $urlRouterProvider.otherwise('home');
 }])
-.factory('eventsFactory',function(){
-	return {
-		events : [{'title' : 'Chess Olympiad', 'link' : 'www.google.com'},
-    {'title' : 'Blitz Games', 'link' : 'www.google.com'},
-    {'title' : 'Immortal Events', 'link' : 'www.google.com'} ]
-	};
-})
-.controller('MainCtrl', ['$scope','eventsFactory', function($scope, eventsFactory){
-  $scope.events = eventsFactory.events;
+.factory('eventsFactory',['$http',function($http){
 
-  $scope.addEvent = function(){
-    if(!$scope.title || $scope.title===''){return;}
-    $scope.events.push({'title':$scope.title, 'link':'http://firstpost.com'});
-    $scope.title='';
-  };
+  var obj = {
+    events : [],
+    getAll : function(){
+      return $http.get('/events').then(function(data) {
+        console.log("Success The returned object is ", data.data);
+        angular.copy(data.data, obj.events);
+      },function(err) { console.log("Error"); })}
+    };
+
+    return obj;
+}])
+.controller('MainCtrl', ['$scope', 'eventsFactory',function($scope, eventsFactory){
+  $scope.events = eventsFactory.events;
 
 }])
-.controller('EventsCtrl', ['$scope','eventsFactory', function($scope, eventsFactory){
+.controller('CreateEventCtrl', ['$scope', '$http', 'eventsFactory', function($scope, $http, eventsFactory){
   $scope.events = eventsFactory.events;
 
   $scope.addEvent = function(){
     if(!$scope.title || $scope.title===''){return;}
-    $scope.events.push({'title':$scope.title, 'link':'http://firstpost.com'});
-    $scope.title='';
+    var newEvent = {
+      title : $scope.title,
+      link : $scope.link,
+      description : $scope.description
+     };
+     $scope.title='';
+     return $http({
+          method: 'POST',
+          url: "/events",
+          data: newEvent
+        });
   };
 
 }]);

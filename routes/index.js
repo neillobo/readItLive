@@ -27,4 +27,6 @@ router.post('/events', function(req, res, next){
 	});
 });
 
+router.post('/')
+
 module.exports = router;

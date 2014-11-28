@@ -38,8 +38,15 @@ function($stateProvider, $urlRouterProvider) {
 
     return obj;
 }])
-.controller('MainCtrl', ['$scope', 'eventsFactory',function($scope, eventsFactory){
+.controller('MainCtrl', ['$scope', '$state', 'eventsFactory',function($scope, $state, eventsFactory){
   $scope.events = eventsFactory.events;
+
+  // $scope.addEventPage = function(){
+  //   $state.go('newEvent');
+  // }
+  $scope.getEvent = function(event){
+    console.log(event);
+  }
 
 }])
 .controller('CreateEventCtrl', ['$scope', '$http', 'eventsFactory', function($scope, $http, eventsFactory){

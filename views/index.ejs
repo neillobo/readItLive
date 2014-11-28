@@ -18,11 +18,13 @@
              <h1>Read It Live</h1>
            </div>
 
+           <a ui-sref="newEvent">Create a New Event</a>
+
            <div ng-repeat="event in events">
              <span style="font-size:20px; margin-left:10px;">
-               <a href="{{event.link}}">
+               <div ng-click='getEvent(event)'>
                {{event.title}}
-               </a>
+               </div>
              </span>
            </div>
 
@@ -32,7 +34,7 @@
           <div class="page-header">
              <h1>Read It Live</h1>
            </div>
-
+           <a ui-sref="home">Return to All Events</a>
            <h3>Add a new event</h3>
 
            <div class="form-group">

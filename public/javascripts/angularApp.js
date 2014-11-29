@@ -54,11 +54,10 @@ function($stateProvider, $urlRouterProvider) {
       }, function(err) {console.log("Error in finding event", err); });
 
     $scope.addPost = function(){
-      var textData = document.getElementById("text").value;
       return $http({
         method: 'POST',
           url: "/events/"+$stateParams.id+"/post",
-          data: {body : textData }
+          data: {body : document.getElementById("text").value }
         });
     };
 

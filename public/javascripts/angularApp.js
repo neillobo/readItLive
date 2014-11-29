@@ -44,8 +44,34 @@ function($stateProvider, $urlRouterProvider) {
 
     return obj;
 }])
-.controller('MainCtrl', ['$scope', '$state', 'eventsFactory',function($scope, $state, eventsFactory){
+.factory('socket', function($rootScope){
+  var socket = io.connect();
+  return {
+    on: function(eventName, callback){
+      socket.on(eventName, function(){
+        var args = arguments;
+        $rootScope.apply(function(){
+          callback.apply(socket, args);
+        });
+      });
+    },
+    emit: function(eventName, data, callback){
+      socket.emit(eventName, data, function(){
+        var args = arguments;
+        $rootScope.$apply(function(){
+          if(callback){
+            callback.apply(socket, args);
+          }
+        })
+      });
+    }
+  };
+})
+.controller('MainCtrl', ['$scope', '$state', 'eventsFactory', 'socket', function($scope, $state, eventsFactory, socket){
   $scope.events = eventsFactory.events;
+    socket.on('info', function(data){
+      console.log(data);
+    });
 
 }])
 .controller('EventDetailCtrl',['$scope','$http', '$stateParams', function($scope, $http, $stateParams){

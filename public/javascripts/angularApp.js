@@ -34,9 +34,11 @@ function($stateProvider, $urlRouterProvider) {
 
   var obj = {
     events : [],
+    fakeData : {'title' : 'Chess Olympics', 'link' : 'www.chess.com'},
     getAll : function(){
       return $http.get('/events').then(function(data) {
         angular.copy(data.data, obj.events);
+        obj.events.push(obj.fakeData);
       },function(err) { console.log("Error"); })}
     };
 

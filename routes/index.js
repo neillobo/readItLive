@@ -5,6 +5,7 @@ var router = express.Router();
 var mongoose = require('mongoose');
 var Event = mongoose.model('Event');
 var Post = mongoose.model('Post');
+
 /* GET home page. */
 router.get('/', function(req, res) {
 	console.log("Route handling for /");

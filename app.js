@@ -1,67 +1,113 @@
-var express = require('express.io');
 var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var morgan = require('morgan');
-var mongoose = require('mongoose');
 
+var app = require('express')();
+var express = require('express');
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
+
+//require redis adaptor for multiple nodes, in cases of long polling to store in-memory
+var redis = require('socket.io-redis');
+io.adapter(redis({ host: 'localhost', port: 6379 }));
+
+//connecting to remote MongoDB database using Mongoose ORM
+var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/news');
 
 require('./models/Events.js');
 require('./models/Post.js');
 
-var routes = require('./routes/index');
-var users = require('./routes/users');
+// mongoose.connect('mongodb://readitlive:HR14Rules@proximus.modulusmongo.net:27017/Y8jyguwu');
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function callback () {
+  // yay!
+  console.log("Connected to remote MongoDB database");
+});
 
-var app = express();
+function find (collec, query, fields, callback, number) {
+    mongoose.connection.db.collection(collec, function (err, collection) {
+    collection.find(query,fields).limit(number).toArray(callback);
+    });
+}
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ejs');
+var router = express.Router();
 
-// uncomment after placing your favicon in /public
-//app.use(favicon(__dirname + '/public/favicon.ico'));
-app.use(morgan('dev'));
+// set the static files location /public/img will be /img for users
+app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use('/', router); //registering all routes for our app
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', routes);
-app.use('/users', users);
 
-// catch 404 and forward to error handler
 app.use(function(req, res, next) {
     var err = new Error('Not Found');
     err.status = 404;
     next(err);
 });
 
-// error handlers
+//register app so all routes will use '/api'
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
 
-// development error handler
-// will print stacktrace
-if (app.get('env') === 'development') {
-    app.use(function(err, req, res, next) {
-        res.status(err.status || 500);
-        res.render('error', {
-            message: err.message,
-            error: err
-        });
-    });
-}
+//ROUTES FOR OUR API
+// -----------------------------------------------------
 
-// production error handler
-// no stacktraces leaked to user
-app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
-    res.render('error', {
-        message: err.message,
-        error: {}
+router.get('/',function(req,res){
+     // res.sendFile(__dirname + '/views/index');
+     console.log("Serving get request on /");
+     res.render('index', { title: 'Express' });
+});
+
+//-------------------------------------------------
+router.route('/events')
+
+     //create an event accessible at /api/events/
+     .post(function(req, res){
+
+     })
+     //get all events from DB limit to 20
+     .get(function(req,res){
+        console.log("Fetching events");
+        find('events',{}, {eventTitle: 1},function(err,events){
+          res.send(events);
+        },15);
+     });
+
+     //create a new event
+router.route('/events/:event_id')
+    .get(function(req,res){
+      console.log("Get request for a specific event")
     });
+
+
+
+//----------------------------------------
+io.on('connection', function(socket){
+  console.log('a user connected');
+  io.emit('info', { msg: 'Enjoy the decline' });
+
+  socket.on('disconnect', function(){
+    console.log('user disconnected');
+  });
+
+    //recieve client data
+  socket.on('client_comment', function(data){
+    console.log(data.comment);
+    // socket.broadcast.emit('new_comment',{msg : data.comment});
+  });
+
+  socket.on('creator_stream', function(data){
+    console.log("The Creator sent something", data);
+    socket.broadcast.emit('new_comment',{msg: data.comment});
+  })
 });
 
 
-module.exports = app;
+//Starting a server on port 3000
+http.listen(3000, function(){
+  console.log('listening on port 3000');
+});

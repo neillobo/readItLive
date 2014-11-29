@@ -12,7 +12,7 @@ router.get('/', function(req, res) {
 });
 
 router.get('/events', function(req, res, next) {
-	console.log("Route handling for /events");
+
   Event.find(function(err, events){
   	if(err){ return next(err); }
 
@@ -21,6 +21,8 @@ router.get('/events', function(req, res, next) {
 });
 
 router.post('/events', function(req, res, next){
+
+	console.log("POST REQUEST for creating new events");
 	var event = new Event(req.body);
 
 	event.save(function(err, event){
@@ -30,24 +32,48 @@ router.post('/events', function(req, res, next){
 	});
 });
 
-
-
-
-
 router.get('/events/:id', function(req, res, next){
-
-	console.log("Route handling for /events/:id", req.params.id);
 
 		var ObjectId = require('mongoose').Types.ObjectId;
 		var eventId = new ObjectId(req.params.id);
 
-		console.log("The eventId is ", eventId);
-
 	Event.findById(eventId, function(err, event){
 		if(err){ return next(err); }
-		res.json(event);
+		event.populate('posts', function(err, event){
+			res.json(event);
+		})
+
 	});
 
 });
+
+router.post('/events/:id/post', function(req, res, next){
+
+	console.log("Event Id", req.params.id, "Request body", req.body);
+
+		var ObjectId = require('mongoose').Types.ObjectId;
+		var eventId = new ObjectId(req.params.id);
+
+	Event.findById(eventId, function(err, event){
+		if(err){ return next(err); }
+			var post  = new Post(req.body);
+			post.event = req.params.id;
+
+			post.save(function(error, post){
+				if(error) {return next(error);}
+
+				console.log("Post saved");
+				event.posts.push(post);
+				event.save(function (err, event) {
+					if(err) {return next(err);}
+
+					res.json(post);
+				});
+
+			});
+	});
+
+});
+
 
 module.exports = router;

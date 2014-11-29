@@ -26,12 +26,6 @@ function($stateProvider, $urlRouterProvider) {
       url: '/event/:id',
       templateUrl: '/eventDetail.html',
       controller: 'EventDetailCtrl'
-      // resolve : {
-      //   postsFactory : 'postsFactory',
-      //   posts : function(postsFactory){
-      //     return postsFactory.getPosts().$promise;
-      //   }
-      // }
     });
 
   $urlRouterProvider.otherwise('home');
@@ -48,23 +42,25 @@ function($stateProvider, $urlRouterProvider) {
 
     return obj;
 }])
-.factory('postsFactory',['$http','$stateParams', function($http, $stateParams){
-
-
-}])
 .controller('MainCtrl', ['$scope', '$state', 'eventsFactory',function($scope, $state, eventsFactory){
   $scope.events = eventsFactory.events;
 
 }])
-.controller('EventDetailCtrl',['$scope','$http', 'postsFactory', '$stateParams', function($scope, $http, postsFactory, $stateParams){
+.controller('EventDetailCtrl',['$scope','$http', '$stateParams', function($scope, $http, $stateParams){
 
-
-
-    $http.get('/events/'+$stateParams.id).then(function(data){
-        console.log("Retrieving posts for specific event", data);
-        $scope.posts = data;
+    $http.get('/events/'+$stateParams.id).then(function(eventObject){
+        console.log("Retrieving posts for specific event", eventObject);
+        $scope.posts = eventObject.data.posts;
       }, function(err) {console.log("Error in finding event", err); });
 
+    $scope.addPost = function(){
+      var textData = document.getElementById("text").value;
+      return $http({
+        method: 'POST',
+          url: "/events/"+$stateParams.id+"/post",
+          data: {body : textData }
+        });
+    };
 
 }])
 .controller('CreateEventCtrl', ['$scope', '$http', 'eventsFactory', function($scope, $http, eventsFactory){

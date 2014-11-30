@@ -6,14 +6,6 @@
   <script src="/socket.io/socket.io.js"></script>
   <script src="/javascripts/angularApp.js"></script>
   <script src="http://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.10/angular-ui-router.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded',function(){
-      var socket = io();
-      socket.on('info',function(data){
-        console.log(data);
-      });
-    });
-    </script>
   <style> .glyphicon-thumbs-up { cursor:pointer } </style>
 </head>
 <body ng-app="readItLive">

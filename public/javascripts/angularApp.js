@@ -8,14 +8,14 @@ function($stateProvider, $urlRouterProvider) {
     .state('home', {
       url: '/home',
       templateUrl: '/home.html',
-      controller: 'MainCtrl',
-      resolve : {
-        eventsFactory : 'eventsFactory',
+      controller: 'MainCtrl'
+      // resolve : {
+      //   eventsFactory : 'eventsFactory',
 
-        events : function(eventsFactory){
-          return eventsFactory.getAll().$promise;
-        }
-      }
+      //   events : function(eventsFactory){
+      //     return eventsFactory.getAll();
+      //   }
+      // }
     })
     .state('newEvent', {
       url: '/newEvent',
@@ -36,21 +36,36 @@ function($stateProvider, $urlRouterProvider) {
     events : [],
     fakeData : {'title' : 'Chess Olympics', 'link' : 'www.chess.com'},
     getAll : function(){
-      return $http.get('/events').then(function(data) {
-        angular.copy(data.data, obj.events);
-        obj.events.push(obj.fakeData);
-      },function(err) { console.log("Error"); })}
+
+     //  return socket.emit('events:get', {}, function(result){
+     //    if(!result){
+     //      console.log("Error in retrieving events");
+     //    } else {
+     //      angular.copy(data.data, obj.events);
+     //      obj.events.push(obj.fakeData);
+     //    }
+     // });
+       // return socket.on('info', function(data){
+       //   console.log(data);
+       // });
+      }
     };
+    //   return $http.get('/events').then(function(data) {
+    //     angular.copy(data.data, obj.events);
+    //     obj.events.push(obj.fakeData);
+    //   },function(err) { console.log("Error"); })}
+    // };
 
     return obj;
 }])
 .factory('socket', function($rootScope){
   var socket = io.connect();
+
   return {
     on: function(eventName, callback){
       socket.on(eventName, function(){
         var args = arguments;
-        $rootScope.apply(function(){
+        $rootScope.$apply(function(){
           callback.apply(socket, args);
         });
       });
@@ -69,9 +84,20 @@ function($stateProvider, $urlRouterProvider) {
 })
 .controller('MainCtrl', ['$scope', '$state', 'eventsFactory', 'socket', function($scope, $state, eventsFactory, socket){
   $scope.events = eventsFactory.events;
-    socket.on('info', function(data){
-      console.log(data);
-    });
+
+  socket.on('info', function(data){
+         console.log(data);
+  });
+
+  socket.emit('events:get', {}, function(result){
+      if(!result){
+        console.log("Error in retrieving events");
+      } else {
+        console.log("Events received", result);
+        angular.copy(data.data, obj.events);
+        obj.events.push(obj.fakeData);
+      }
+   });
 
 }])
 .controller('EventDetailCtrl',['$scope','$http', '$stateParams', function($scope, $http, $stateParams){

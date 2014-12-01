@@ -8,14 +8,13 @@ function($stateProvider, $urlRouterProvider) {
     .state('home', {
       url: '/home',
       templateUrl: '/home.html',
-      controller: 'MainCtrl'
-      // resolve : {
-      //   eventsFactory : 'eventsFactory',
-
-      //   events : function(eventsFactory){
-      //     return eventsFactory.getAll();
-      //   }
-      // }
+      controller: 'MainCtrl',
+      resolve : {
+        eventsFactory : 'eventsFactory',
+        events : function(eventsFactory){
+          return eventsFactory.getEvents().$promise;
+        }
+      }
     })
     .state('newEvent', {
       url: '/newEvent',
@@ -36,24 +35,10 @@ function($stateProvider, $urlRouterProvider) {
     events : [],
     fakeData : {'title' : 'Chess Olympics', 'link' : 'www.chess.com'},
     getEvents : function(){
-
-      socket.emit('events:get');
-
-      socket.on('events:list', function(eventArray){
-        // angular.copy(data.data, obj.events);
-          console.log("events received ", eventArray);
-            obj.events = eventArray;
-            obj.events.push(obj.fakeData);
-
-      });
-      }
+     return $http.get('/events').then(function(data) {
+      angular.copy(data.data, obj.events);
+    },function(err) { console.log("Error"); })}
     };
-    //   return $http.get('/events').then(function(data) {
-    //     angular.copy(data.data, obj.events);
-    //     obj.events.push(obj.fakeData);
-    //   },function(err) { console.log("Error"); })}
-    // };
-
     return obj;
 }])
 .factory('socket', function($rootScope){
@@ -81,43 +66,29 @@ function($stateProvider, $urlRouterProvider) {
   };
 })
 .controller('MainCtrl', ['$scope', '$state', 'eventsFactory', 'socket', function($scope, $state, eventsFactory, socket){
-  // $scope.events = eventsFactory.events;
-  // eventsFactory.getEvents();
-
-  socket.on('info', function(data){
-         console.log(data);
-  });
-
-  socket.emit('events:get');
-
-  socket.on('events:list', function(eventArray){
-    // angular.copy(data.data, obj.events);
-      console.log("events received ", eventArray);
-        $scope.events = eventArray;
-  });
+  $scope.events = eventsFactory.events;
 
 }])
 .controller('EventDetailCtrl',['$scope','$http', '$stateParams', 'socket', function($scope, $http, $stateParams, socket){
 
-    // $http.get('/events/'+$stateParams.id).then(function(eventObject){
-    //     console.log("Retrieving posts for specific event", eventObject);
-    //     $scope.posts = eventObject.data.posts;
-    //   }, function(err) {console.log("Error in finding event", err); });
-
     socket.emit('posts:get',{id : $stateParams.id});
 
     socket.on('posts:list', function(eventObject){
-      console.log("posts received ", eventObject);
         $scope.posts = eventObject.posts;
     });
 
+    socket.on('posts:add', function(newPost){
+      $scope.posts.push(newPost.post);
+    });
+
     $scope.addPost = function(){
-      // return $http({
-      //   method: 'POST',
-      //     url: "/events/"+$stateParams.id+"/post",
-      //     data: {body : document.getElementById("text").value }
-      //   });
-      // socket.emit('post:add', {body : document.getElementById("text").value });
+      socket.emit('posts:add', {
+        id : $stateParams.id,
+        post : {
+          body : document.getElementById("text").value
+        }
+      });
+      $scope.posts.push({body : document.getElementById("text").value});
     };
 
 }])
@@ -131,8 +102,13 @@ function($stateProvider, $urlRouterProvider) {
       link : $scope.link,
       description : $scope.description
      };
-     $scope.title='';
-     socket.emit('events:add', newEvent);
+     $scope.title = '';
+     $scope.description = '';
+     return $http({
+        method: 'POST',
+          url: "/events/",
+          data: newEvent
+        });
   };
 
 }]);

@@ -43,7 +43,6 @@ router.get('/events/:id', function(req, res, next){
 		event.populate('posts', function(err, event){
 			res.json(event);
 		})
-
 	});
 
 });

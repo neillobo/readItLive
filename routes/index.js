@@ -24,25 +24,21 @@ module.exports = function(passport){
 		res.render('login', { message: req.flash('message') });
 	});
 
-	router.get('/events', function(req, res, next) {
-		console.log("Responding to call for events");
-		Event.find(function(err, events){
-				  	if(err){ return next(err); }
-				  	res.json(events);
-				  });
-	});
-
-	router.post('/events', function(req, res, next){
-		var event = new Event(req.body);
-			event.save(function(err, event){
-				if(err) {return next(err); }
-				res.json(event);
-			});
-	})
 	/* Handle Login POST */
 	router.post('/login', passport.authenticate('login', {
 		successRedirect: '/main',
 		failureRedirect: '/',
+		failureFlash : true
+	}));
+
+	//Admin Page
+	router.get('/admin', function(req, res) {
+		res.render('admin', { message: req.flash('message') });
+	});
+
+	router.post('/admin', passport.authenticate('admin', {
+		sucessRedirect: '/adminHome',
+		failureRedirect : 'admin',
 		failureFlash : true
 	}));
 
@@ -63,6 +59,23 @@ module.exports = function(passport){
 		res.render('home', { user: req.user });
 	});
 
+	//Get Events listing
+	router.get('/events', function(req, res, next) {
+		console.log("Responding to call for events");
+		Event.find(function(err, events){
+				  	if(err){ return next(err); }
+				  	res.json(events);
+				  });
+	});
+
+	//Create a new Listing
+	router.post('/events', function(req, res, next){
+		var event = new Event(req.body);
+			event.save(function(err, event){
+				if(err) {return next(err); }
+				res.json(event);
+			});
+	});
 	/* Handle Logout */
 	router.get('/signout', function(req, res) {
 		req.logout();

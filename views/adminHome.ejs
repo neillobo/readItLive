@@ -1,0 +1,78 @@
+<html>
+<head>
+  <title>Read It Live</title>
+  <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.19/angular.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/javascripts/angularAdminApp.js"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.10/angular-ui-router.js"></script>
+  <style> .glyphicon-thumbs-up { cursor:pointer } </style>
+</head>
+<body ng-app="readItLive">
+  <div class="row">
+    <div class="col-md-6 col-md-offset-3">
+      <ui-view> </ui-view>
+    </div>
+  </div>
+
+<!--  template for Home  -->
+
+      <script type="text/ng-template" id="/home.html">
+          <div class="page-header">
+             <h1>Read It Live</h1>
+           </div>
+
+           <a ui-sref="newEvent">Create a New Event</a>
+
+           <div ng-repeat="event in events">
+             <span style="font-size:20px; margin-left:10px;">
+
+               <a ui-sref="eventDetail({id : '{{event._id}}'})">
+               {{event.title}}
+               </a>
+             </span>
+           </div>
+
+      </script>
+
+<!-- Template for Creation of New Event -->
+       <script type="text/ng-template" id="/newEvent.html">
+          <div class="page-header">
+             <h1>Read It Live</h1>
+           </div>
+           <a ui-sref="home">Return to All Events</a>
+           <h3>Add a new event</h3>
+
+           <div class="form-group">
+             <input type="text" class="form-control" placeholder="Title" ng-model="title"></input>
+           </div>
+           <div class="form-group">
+             <input type="text" class="form-control" placeholder="Details" ng-model="detail"></input>
+           </div>
+           <button ng-click='addEvent()' type="submit" class="btn btn-primary">Submit</button>
+
+      </script>
+
+<!-- Template for Details and Posts for a Specific Event -->
+      <script type="text/ng-template" id="/eventDetail.html">
+
+        <div class="page-header">
+          <h1>Read It Live</h1>
+        </div>
+        <a ui-sref="home">Return to All Events</a>
+        <h3>This is an event specific page</h3>
+
+        <textarea id="text"></textarea>
+        <button ng-click="addPost()"> Submit Post </button>
+          <div ng-repeat="post in posts">
+             <span style="font-size:20px; margin-left:10px;">
+               <div>
+               {{post.body}}
+               </div>
+             </span>
+           </div>
+
+      </script>
+
+    </body>
+    </html>

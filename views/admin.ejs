@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title> Admin Login </title>
+    <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/stylesheets/signin.css" rel="stylesheet">
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="page-header">
+             <h1>Read It Live</h1>
+           </div>
+      <form action="/admin" method="post" class="form-signin" >
+        <h2 class="form-signin-heading">Show your Badge!</h2>
+        <label class="sr-only">Username</label>
+        <input type="text" class="form-control" placeholder="UserName" name="username" required autofocus>
+        <label class="sr-only">Password</label>
+        <input type="password" class="form-control" placeholder="Password" name="password" required>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+      </form>
+    </div>
+  </body>
+</html>

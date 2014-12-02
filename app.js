@@ -13,9 +13,20 @@ io.adapter(redis({ host: 'localhost', port: 6379 }));
 
 
 //--------------------------------------------------------
-//Passport-Local for Authentication
+//Passport-Local for Authentication Configuration
 var passport = require('passport');
-var LocalStrategy = require('passport-local').Strategy;
+var expressSession = require('express-session');
+
+app.use(expressSession({secret: 'mySecret',
+                 saveUninitialized: true,
+                 resave: true}));
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Using the flash middleware provided by connect-flash to store messages in session
+// and displaying in templates
+var flash = require('connect-flash');
+app.use(flash());
 
 //-----------------------------------------------------------
 //connecting to remote MongoDB database using Mongoose ORM
@@ -29,21 +40,17 @@ require('./models/Post.js');
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function callback () {
-  // yay!
-  console.log("Connected to remote MongoDB database");
+  console.log("Connected to MongoDB database");
 });
 
+//not being used anymore
 function find (collec, query, fields, callback, number) {
     mongoose.connection.db.collection(collec, function (err, collection) {
     collection.find(query,fields).limit(number).toArray(callback);
     });
 }
 
-//--------------------------------------------------------------
-var router = express.Router();
-var socket = require('./routes/socket.js');
-var routes = require('./routes')
-var routeEvents = require('./routes/events.js');
+
 // set the static files location /public/img will be /img for users
 app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.json());
@@ -52,15 +59,15 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 //-------------------------------------
-//initializing for passport authentication
-app.use(passport.initialize());
-app.use(passport.session());
-var Account = require('./models/Account.js');
-passport.use(new LocalStrategy(Account.authenticate()));
-passport.serializeUser(Account.serializeUser());
-passport.deserializeUser(Account.deserializeUser());
 
-app.use('/', router); //registering all routes for our app
+// Initialize Passport
+var initPassport = require('./passport/init');
+initPassport(passport);
+
+var socket = require('./routes/socket.js');
+var routes = require('./routes/index')(passport);
+app.use('/', routes);
+//registering all routes for our app
 
 app.use(function(req, res, next) {
     var err = new Error('Not Found');
@@ -73,16 +80,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 //ROUTES FOR OUR API
-// -----------------------------------------------------
-
-router.get('/', routes.index);
-router.route('/events')
-    .get(routeEvents.get)
-    .post(routeEvents.post);
-
-
-// redirect all others to the index (HTML5 history)
-router.get('*', routes.index);
+// moved under routes
 
 //----------------------------------------
 // socket listening and responding to events

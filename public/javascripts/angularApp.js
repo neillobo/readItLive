@@ -78,7 +78,9 @@ function($stateProvider, $urlRouterProvider) {
     });
 
     socket.on('posts:add', function(newPost){
-      $scope.posts.push(newPost.post);
+      if($stateParams.id === newPost.id){
+        $scope.posts.push(newPost.post);
+      }
     });
 
     $scope.addPost = function(){

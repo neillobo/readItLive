@@ -11,6 +11,12 @@ var io = require('socket.io')(http);
 var redis = require('socket.io-redis');
 io.adapter(redis({ host: 'localhost', port: 6379 }));
 
+
+//--------------------------------------------------------
+//Passport-Local for Authentication
+var passport = require('passport');
+var LocalStrategy = require('passport-local').Strategy;
+
 //-----------------------------------------------------------
 //connecting to remote MongoDB database using Mongoose ORM
 var mongoose = require('mongoose');
@@ -44,6 +50,15 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+//-------------------------------------
+//initializing for passport authentication
+app.use(passport.initialize());
+app.use(passport.session());
+var Account = require('./models/Account.js');
+passport.use(new LocalStrategy(Account.authenticate()));
+passport.serializeUser(Account.serializeUser());
+passport.deserializeUser(Account.deserializeUser());
 
 app.use('/', router); //registering all routes for our app
 

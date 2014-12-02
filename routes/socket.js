@@ -21,6 +21,7 @@ module.exports = function(socket){
 
 	socket.on('posts:add', function(newPost){
 
+		//broadcast to all clients except the one originating this socket
 		socket.broadcast.emit('posts:add', newPost);
 
 		var ObjectId = require('mongoose').Types.ObjectId;

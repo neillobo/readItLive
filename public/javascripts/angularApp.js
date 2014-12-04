@@ -94,24 +94,4 @@ function($stateProvider, $urlRouterProvider) {
       // $scope.posts.push({body : document.getElementById("text").value});
     };
 
-}])
-.controller('CreateEventCtrl', ['$scope', '$http', 'eventsFactory', function($scope, $http, eventsFactory){
-  $scope.events = eventsFactory.events;
-
-  $scope.addEvent = function(){
-    if(!$scope.title || $scope.title===''){return;}
-    var newEvent = {
-      title : $scope.title,
-      link : $scope.link,
-      description : $scope.description
-     };
-     $scope.title = '';
-     $scope.description = '';
-     return $http({
-        method: 'POST',
-          url: "/events/",
-          data: newEvent
-        });
-  };
-
 }]);

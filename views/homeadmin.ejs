@@ -24,14 +24,25 @@
 
            <a ui-sref="newEvent">Create a New Event</a>
 
-           <div ng-repeat="event in events">
-             <span style="font-size:20px; margin-left:10px;">
-
-               <a ui-sref="eventDetail({id : '{{event._id}}'})">
-               {{event.title}}
-               </a>
-             </span>
-           </div>
+           <table class="table table-striped">
+            <thead><tr>
+              <th>Name</th>
+              <th>Blogger</th>
+              <th>Date</th>
+              <th>Description</th>
+            </tr></thead>
+            <tbody><tr ng-repeat="event in events">
+              <td>
+                <button class="btn" ng-click="editEvent(event)">
+                <span class="glyphicon glyphicon-pencil"></span>&nbsp;&nbsp;Edit
+                </button>
+              </td>
+              <td>{{ event.title }}</td>
+              <td>{{ event.creator }}</td>
+              <td>{{ event.date }}</td>
+              <td>{{ event.description}}</td>
+            </tr></tbody>
+          </table>
 
       </script>
 

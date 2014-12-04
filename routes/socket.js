@@ -49,15 +49,13 @@ module.exports = function(socket){
 
 				post.save(function(error, post){
 					if(error) {socket.emit('error',err);}
-
 					event.posts.push(post);
 					event.save(function (err, event) {
 						if(err) {socket.emit('error',err);}
 
 					});
-
 				});
-	});
+	  });
 	});
 
   socket.on('disconnect', function () {

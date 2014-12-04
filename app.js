@@ -10,7 +10,7 @@ var io = require('socket.io')(http);
 //require redis adaptor for multiple nodes, in cases of long polling to store in-memory
 var redis = require('socket.io-redis');
 io.adapter(redis({ host: 'localhost', port: 6379 }));
-
+// var client = redis.createClient();
 
 //--------------------------------------------------------
 //Passport-Local for Authentication Configuration

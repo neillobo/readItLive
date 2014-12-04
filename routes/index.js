@@ -36,20 +36,26 @@ module.exports = function(passport){
 		res.render('admin', { message: req.flash('message') });
 	});
 
-	router.post('/admin', passport.authenticate('admin', {
-		sucessRedirect: '/adminHome',
-		failureRedirect : 'admin',
+	/* Handle Admin POST */
+	router.post('/admin', passport.authenticate('login', {
+		successRedirect: '/adminhome',
+		failureRedirect: '/admin',
 		failureFlash : true
 	}));
 
+	router.get('/adminhome', isAuthenticated, function(req, res){
+		console.log("reached here for admin home");
+		res.render('homeadmin', { user: req.user });
+	});
+
 	/* GET Registration Page */
 	router.get('/signup', function(req, res){
-		res.render('register',{message: req.flash('message')});
+		res.render('signup',{message: req.flash('message')});
 	});
 
 	/* Handle Registration POST */
 	router.post('/signup', passport.authenticate('signup', {
-		successRedirect: '/home',
+		successRedirect: '/',
 		failureRedirect: '/signup',
 		failureFlash : true
 	}));

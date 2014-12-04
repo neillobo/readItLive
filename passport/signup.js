@@ -10,6 +10,7 @@ module.exports = function(passport){
         function(req, username, password, done) {
 
             findOrCreateUser = function(){
+
                 // find a user in Mongo with provided username
                 User.findOne({ 'username' :  username }, function(err, user) {
                     // In case of any error, return using the done method
@@ -27,10 +28,11 @@ module.exports = function(passport){
                         var newUser = new User();
 
                         // set the user's local credentials
+
                         newUser.username = username;
                         newUser.password = createHash(password);
                         newUser.email = req.param('email');
-
+                        console.log("New user is", newUser);
                         // save the user
                         newUser.save(function(err) {
                             if (err){

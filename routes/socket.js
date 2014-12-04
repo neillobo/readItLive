@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var Event = mongoose.model('Event');
 var Post = mongoose.model('Post');
+var masterClients = [];
 
 module.exports = function(socket){
 	console.log("A user connected");
@@ -16,6 +17,18 @@ module.exports = function(socket){
 				socket.emit('posts:list', event);
 			});
 	  });
+
+	});
+
+	socket.on('i am master', function(){
+		console.log("Master connects");
+		masterClients.push(socket.id);
+	});
+
+	socket.on('message to master', function(newMessage){
+		for(var i=0; i<masterClients.length; i++){
+			socket.to(masterClients[i]).emit('slave says', newMessage);
+		}
 
 	});
 

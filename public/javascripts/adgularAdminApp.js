@@ -43,7 +43,7 @@ function($stateProvider, $urlRouterProvider) {
 }])
 .factory('socket', function($rootScope){
   var socket = io.connect();
-  socket.emit('master');
+  socket.emit('i am master');
   return {
     on: function(eventName, callback){
       socket.on(eventName, function(){

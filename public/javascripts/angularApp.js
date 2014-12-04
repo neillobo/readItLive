@@ -83,14 +83,14 @@ function($stateProvider, $urlRouterProvider) {
       }
     });
 
-    $scope.addPost = function(){
-      socket.emit('posts:add', {
+    $scope.addComment = function(){
+      socket.emit('comment:add', {
         id : $stateParams.id,
         post : {
           body : document.getElementById("text").value
         }
       });
-      $scope.posts.push({body : document.getElementById("text").value});
+      // $scope.posts.push({body : document.getElementById("text").value});
     };
 
 }])

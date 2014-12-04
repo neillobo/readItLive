@@ -25,14 +25,16 @@ module.exports = function(socket){
 		masterClients.push(socket.id);
 	});
 
-	socket.on('message to master', function(newMessage){
+	socket.on('comment:add', function(newMessage){
 		for(var i=0; i<masterClients.length; i++){
-			socket.to(masterClients[i]).emit('slave says', newMessage);
+			console.log("emmiting",newMessage,"to",masterClients[i]);
+			socket.to(masterClients[i]).emit('comment:add', newMessage);
 		}
 
 	});
 
 	socket.on('posts:add', function(newPost){
+		console.log("master is saying something", newPost);
 
 		//broadcast to all clients except the one originating this socket
 		socket.broadcast.emit('posts:add', newPost);

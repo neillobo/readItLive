@@ -44,7 +44,6 @@ module.exports = function(passport){
 	}));
 
 	router.get('/adminhome', isAuthenticated, function(req, res){
-		console.log("reached here for admin home");
 		res.render('homeadmin', { user: req.user });
 	});
 
@@ -67,7 +66,6 @@ module.exports = function(passport){
 
 	//Get Events listing
 	router.get('/events', function(req, res, next) {
-		console.log("Responding to call for events");
 		Event.find(function(err, events){
 				  	if(err){ return next(err); }
 				  	res.json(events);

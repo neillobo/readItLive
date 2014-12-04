@@ -77,9 +77,16 @@ function($stateProvider, $urlRouterProvider) {
         $scope.posts = eventObject.posts;
     });
 
-    socket.on('posts:add', function(newPost){
+    // socket.on('posts:add', function(newPost){
+    //   if($stateParams.id === newPost.id){
+    //     $scope.posts.push(newPost.post);
+    //   }
+    // });
+
+    socket.on('comment:add', function(newPost){
+    console.log("slave says", newPost);
       if($stateParams.id === newPost.id){
-        $scope.posts.push(newPost.post);
+        console.log(newPost.post);
       }
     });
 
@@ -91,6 +98,7 @@ function($stateProvider, $urlRouterProvider) {
         }
       });
       $scope.posts.push({body : document.getElementById("text").value});
+      document.getElementById("text").value = "";
     };
 
 }])

@@ -90,6 +90,7 @@ function($stateProvider, $urlRouterProvider) {
           body : document.getElementById("text").value
         }
       });
+      document.getElementById("text").value = "";
       // $scope.posts.push({body : document.getElementById("text").value});
     };
 

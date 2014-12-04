@@ -4,7 +4,7 @@
   <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
   <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.19/angular.min.js"></script>
   <script src="/socket.io/socket.io.js"></script>
-  <script src="/javascripts/angularApp.js"></script>
+  <script src="/javascripts/angularAdminApp.js"></script>
   <script src="http://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.10/angular-ui-router.js"></script>
   <style> .glyphicon-thumbs-up { cursor:pointer } </style>
 </head>
@@ -63,7 +63,7 @@
         <h3>This is an event specific page</h3>
 
         <textarea id="text"></textarea>
-        <button ng-click="addComment()"> Submit Comment </button>
+        <button ng-click="addPost()"> Submit Comment </button>
           <div ng-repeat="post in posts">
              <span style="font-size:20px; margin-left:10px;">
                <div>

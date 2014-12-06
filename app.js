@@ -31,12 +31,12 @@ app.use(flash());
 //-----------------------------------------------------------
 //connecting to remote MongoDB database using Mongoose ORM
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/news');
+//mongoose.connect('mongodb://localhost/news');
 
 require('./models/Events.js');
 require('./models/Post.js');
 
-// mongoose.connect('mongodb://readitlive:HR14Rules@proximus.modulusmongo.net:27017/Y8jyguwu');
+mongoose.connect('mongodb://neil:qsefzxcv@proximus.modulusmongo.net:27017/E7hutiro');
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function callback () {

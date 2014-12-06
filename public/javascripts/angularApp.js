@@ -75,6 +75,7 @@ function($stateProvider, $urlRouterProvider) {
 
     socket.on('posts:list', function(eventObject){
         $scope.posts = eventObject.posts;
+        $scope.event= eventObject;
     });
 
     socket.on('posts:add', function(newPost){

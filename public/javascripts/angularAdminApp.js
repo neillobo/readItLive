@@ -74,14 +74,10 @@ function($stateProvider, $urlRouterProvider) {
     socket.emit('posts:get',{id : $stateParams.id});
 
     socket.on('posts:list', function(eventObject){
+        $scope.event= eventObject;
         $scope.posts = eventObject.posts;
     });
 
-    // socket.on('posts:add', function(newPost){
-    //   if($stateParams.id === newPost.id){
-    //     $scope.posts.push(newPost.post);
-    //   }
-    // });
 
     socket.on('comment:add', function(newPost){
     console.log("slave says", newPost);
@@ -94,11 +90,11 @@ function($stateProvider, $urlRouterProvider) {
       socket.emit('posts:add', {
         id : $stateParams.id,
         post : {
-          body : document.getElementById("text").value
+          body : document.getElementById("post").value
         }
       });
-      $scope.posts.push({body : document.getElementById("text").value});
-      document.getElementById("text").value = "";
+      $scope.posts.push({body : document.getElementById("post").value});
+      document.getElementById("post").value = "";
     };
 
 }])
